@@ -10,3 +10,6 @@ Primeras pruebas filtrando la imagen y obteniendo el color rojo, de donde sacamo
 
 Imagen del centroide
 ![image](https://github.com/m4r4d0n4/m4r4d0n4.github.io/assets/58432330/6176f941-5035-42a4-9ad6-c0a94a912d0a)
+
+Tras ajustar la velocidad de rotación con el desplazamiento del centroide logramos que el coche ya sea capaz de realizar una vuelta limpia, pero actualmente está la velocidad fija, se producen balanceos y el coche no es rápido (110s por vuelta en circuito simple).
+
