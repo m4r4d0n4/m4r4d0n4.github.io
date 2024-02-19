@@ -17,4 +17,6 @@ Tras ajustar la velocidad de rotación con el desplazamiento del centroide logra
 
 Actualmente el ajuste de la rotación se hace según un umbral dependiendo de la posición en el eje x del centroide. Sin embargo, vamos a probar a controlar su desplazamiento, este desplazamiento es la diferencia entre la ultima coordenada x y la nueva coordenada x, estos valores se obtienen por cada frame renderizado, el tiempo entre frames no podemos saberlo de momento, por lo que calcularemos un deltatime para poder tenerlo y calcular una rotación más precisa.
 
+Ha surgido un nuevo problema y es que, además del balanceo, al aumentar la velocidad llegamos a unos puntos límites donde la curva se aleja lo suficiente como para que el centroide "parpadee". No obtenemos un centroide preciso por lo que vamos a intentar obtener un centroide más preciso sobre el que construir. Según he leído, hay varias aproximaciones, usar la media de las posiciones (algo que descarto porque en cambios bruscos de curva no creo que sea óptimo), interpolación, que puede ser una primera aproximación sobre la que evaluar su funcionamiento aunque dudo que sea la mejor opción y un filtro de Kalman que nos permite predicir la posición actual del centroide basado en datos anteriores. El filtro de Kalman, que desconozco actualmente su funcionamiento y su implementación, creo que puede ser la mejor opción.
+
 
