@@ -21,7 +21,7 @@ Ha surgido un nuevo problema y es que, además del balanceo, al aumentar la velo
 
 ### 22/02
 
-Se va a hacer un PID para rectas y otro para curvas (tanto para rotacion como velocidad), donde el error sera la distancia al centroide en el eje x. Tambien voy a intentar analizar la curva, es decir, con el trazado que percibimos proyectar dicho trazado como si lo viesemos en planta, de manera que puedo analizar la curva en 2D sobre la carretera. Mi objetivo es poder obtener la curvatura y asi poder decidir si es mas cerrada o mas abierta y poder predecir lo antes posible el cambio de PID, ademas de evaluar la posibilidad de usar el parametro de la curvatura para dar un mejor ajuste en la velocidad. 
+Se va a hacer un PID para rectas y otro para curvas (tanto para rotacion como velocidad), donde el error sera la distancia al centroide en el eje x. Tambien voy a intentar analizar la curva, es decir, con el trazado que percibimos proyectar dicho trazado como si lo viesemos en planta (homografía), de manera que puedo analizar la curva en 2D sobre la carretera. Mi objetivo es poder obtener la curvatura y asi poder decidir si es mas cerrada o mas abierta y poder predecir lo antes posible el cambio de PID, ademas de evaluar la posibilidad de usar el parametro de la curvatura para dar un mejor ajuste en la velocidad. 
 
 En resumen, se va a implemenar un controlador PID generico y a partir de este, como tenemos 2 grados de libertad: rotacion y velocidad, generamos 4 PIDs para rectas y curvas.
 
