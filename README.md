@@ -19,4 +19,12 @@ Actualmente el ajuste de la rotación se hace según un umbral dependiendo de la
 
 Ha surgido un nuevo problema y es que, además del balanceo, al aumentar la velocidad llegamos a unos puntos límites donde la curva se aleja lo suficiente como para que el centroide "parpadee". No obtenemos un centroide preciso por lo que vamos a intentar obtener un centroide más preciso sobre el que construir. Según he leído, hay varias aproximaciones, usar la media de las posiciones (algo que descarto porque en cambios bruscos de curva no creo que sea óptimo), interpolación, que puede ser una primera aproximación sobre la que evaluar su funcionamiento aunque dudo que sea la mejor opción y un filtro de Kalman que nos permite predicir la posición actual del centroide basado en datos anteriores. El filtro de Kalman, que desconozco actualmente su funcionamiento y su implementación, creo que puede ser la mejor opción.
 
+### 22/02
 
+Se va a hacer un PID para rectas y otro para curvas (tanto para rotacion como velocidad), donde el error sera la distancia al centroide en el eje x. Tambien voy a intentar analizar la curva, es decir, con el trazado que percibimos proyectar dicho trazado como si lo viesemos en planta, de manera que puedo analizar la curva en 2D sobre la carretera. Mi objetivo es poder obtener la curvatura y asi poder decidir si es mas cerrada o mas abierta y poder predecir lo antes posible el cambio de PID, ademas de evaluar la posibilidad de usar el parametro de la curvatura para dar un mejor ajuste en la velocidad. 
+
+En resumen, se va a implemenar un controlador PID generico y a partir de este, como tenemos 2 grados de libertad: rotacion y velocidad, generamos 4 PIDs para rectas y curvas.
+
+Por otra parte, se va a generar una automata de estados, de manera que podamos capturar los casos mas limites, como la no visualizacion de la recta, y podamos acotar el numero de situaciones inesperadas que podamos recibir. La idea del 19/02 del delta_centroide la dejamos de tener en cuenta y con ello el filtro de kallman, solo precisamos de la distancia que separa el punto ideal del centroide y el punto actual.
+
+Por último, se va a realizar un calibrado del punto de referencia del centroide, actualmente el centroide objetivo se encuentra en la mitad de la pantalla, pero lo ideal es que esté levemente desplazado. Encontraremos experimentalmente este punto.
