@@ -34,4 +34,4 @@ También he pensado en alguna manera de detectar la cercanía con las paredes co
 
 ## 24/02 
 
-Ya tenemos los 4 controladores y los valores para los controladores PID de rectas ajustados, ahora tenemos que ajustar los PIDs para curvas. Para ello, primero necesitamos encontrar una manera fiable de detectar si estamos en una curva o una recta. Tambien hemos calibrado el cntroide del eje x que es 410
+Ya tenemos los 4 controladores y los valores para los controladores PID de rectas ajustados, ahora tenemos que ajustar los PIDs para curvas. Para ello, primero necesitamos encontrar una manera fiable de detectar si estamos en una curva o una recta. Tambien hemos calibrado el cntroide del eje x que es 370. Para detectar la curva vamos a usar la convex hull delc ontorno de la curva y segun los defectos que tenga, mientras mas defectos mayor es la curva, experimental se esperan tener mas de 12 defectos si la curva no es recta
