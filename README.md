@@ -30,3 +30,8 @@ Por otra parte, se va a generar una automata de estados, de manera que podamos c
 Por último, se va a realizar un calibrado del punto de referencia del centroide, actualmente el centroide objetivo se encuentra en la mitad de la pantalla, pero lo ideal es que esté levemente desplazado. Encontraremos experimentalmente este punto.
 
 También he pensado en alguna manera de detectar la cercanía con las paredes como posible parámetro para ajustar el error del PID de las velocidades. Probablemente analizando la intensidad del color de las paredes sea una buena aproximación. También me he fijado que al acercarnos una curva se renderiza las paredes del fondo, de manera que si vemos una pared oscura delante en una región determinada de la pantalla podemos asegurar que nos acercamos a una curva.
+
+
+## 24/02 
+
+Ya tenemos los 4 controladores y los valores para los controladores PID de rectas ajustados, ahora tenemos que ajustar los PIDs para curvas. Para ello, primero necesitamos encontrar una manera fiable de detectar si estamos en una curva o una recta. Tambien hemos calibrado el cntroide del eje x que es 410
