@@ -38,5 +38,5 @@ Ya tenemos los 4 controladores y los valores para los controladores PID de recta
 
 ## 25/02
 
-Contamos con un prototipo funcional que ya recorre el circuito, pero tenemos información que no estamos teniendo en cuenta como las distnacias a las paredes. A intentar ajustar la información dada por el centroide, evaluando solo considerar un fragmento de la pantalla. Para evitar las rotaciones bruscas vamos a limitar el PDI que puede dar, para rotacion será 2 y para velocidad 30
+Contamos con un prototipo funcional que ya recorre el circuito, pero tenemos información que no estamos teniendo en cuenta como las distnacias a las paredes. A intentar ajustar la información dada por el centroide, evaluando solo considerar un fragmento de la pantalla. Para evitar las rotaciones bruscas vamos a limitar el PDI que puede dar, para rotacion será (2,-2) y para velocidad 30. El método actual a veces no detecta las curvas que son muy abiertas, por lo que se acompañara de otro metodo que mire como de ancho es el trazado como manera auxiliar para asegurarnos de que estamos en uan curva o una recta
 
