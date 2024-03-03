@@ -75,7 +75,7 @@ Con la detección de curvas hecha, la máquina de estados resultante es muy simp
 
 ### Resultados
 
-Carpeta con los vídeos, solo accesible con usuario @urjc.es
+Carpeta con los vídeos, solo accesible con usuario de la URJC
 [Carpeta con los vídeos](https://urjc-my.sharepoint.com/:f:/g/personal/juan_montes_urjc_es/EkIDjlBM_zFDg9y-xqpzB2ABRTc5QFR2A4z2gQ9MTQYldw?e=GBHwh3)
 
 Se han grabado usando la herramiento de grabación de Gazebo.
