@@ -20,7 +20,7 @@ Por último, se diseñará una máquina de estados que nos indicará si estamos 
 
 Para obtener una referencia que nos sirva para medir el error se toma la línea roja. A partir de aquí, se aplica un procesado de la imagen que incluye un filtro de color HSV, la obtención de la máscara que da los puntos de la línea roja y el cálculo de su contorno con el que calcularemos el centroide. Lo primero que se realiza es obtener un centroide como referencia si el coche estuviese encima de la línea, para ello, se situa el coche en la línea y se toma el centroide de referencia. A partir de aquí, se puede tomar como medida de error la diferencia entre el centroide observado y el centroide objetivo. En este caso, se toma la diferencia respecto de la coordenada x, y no se analizará la parte inferior de la línea roja que será previamente recortada, debido a que la información del centroide de la parte superior de la máscara varía menos y nos proporciona un error más estable.
 
-La primera aproximación al error es ´error = centroide_objetivo_x-centroide_observado_x´, sin embargo, como el centroide objetivo no está exactamente en medio de la pantalla y para obtener un error en [0,1] llevamos a cabo una normalización, por tanto, ´error = (centroide_objetivo_x-centroide_observado_x)/centroide_objetivo_x´
+La primera aproximación al error es `error = centroide_objetivo_x-centroide_observado_x`, sin embargo, como el centroide objetivo no está exactamente en medio de la pantalla y para obtener un error en [-1,1] llevamos a cabo una normalización, por tanto, `error = (centroide_objetivo_x-centroide_observado_x)/centroide_objetivo_x`
 
 Meter foto centroide
 
@@ -42,6 +42,8 @@ Nuestro sistema consta de 4 PIDs:
 - Curvas : Un PID para velocidad y un PID para girar el vehículo
 - Rectas : Un PID para velocidad y un PID para girar el vehículo
 
+El error que pasamos a nuestros PIDs es el mencionado previamente, pero para el caso de la velocidad pasamos un valor absoluto del error puesto que no nos interesa su signo sino su magnitud, es decir, cómo de cerca está el vehículo del centroide. 
+
 La tarea de ajuste de parámetros de los PIDs se ha llevado a cabo manualmente, lo que implica el ajuste de 8 parámetros. (Hablar de q esta manera no es optima y tal tal tal en alguan seccion de mejroas y eso) (nuestros valores de PIDs)
 
 
@@ -60,58 +62,38 @@ Con la detección de curvas hecha, la máquina de estados resultante es muy simp
 
 Video 
 
+Se ha comprobado el funcionamiento del vehículo en todos los circuitos y en el circuito simple en sentido opuesto. Además, se ha trasladado el coche con el simulador para que mire la pared y ver si es resiliente a cambios imprevistos.
+
 ### Alternativas intentadas
 
+Dentro de cada una de las posibilidades vistas se han probado varias opciones. El detector de curvas tuvimos otros dos candidatos, la primera idea fue obtener los puntos como los obtenemos actualmente pero simplemente comparar las pendientes entre los puntos dos a dos, esta pendiente debe ser similar si estamos en una línea. El problema es que la línea muchas veces esta muy en horizontal y la pendiente es muy grande y en las curvas a veces no lo es es tanto, intenté de alguna manera normalizar las diferencias pero sin éxito y opté por el método de ver las diferencias con la línea creada por dos puntos, que además es un método que nos da un resultado cuantitativo que tiene en cuenta a todos los puntos. También se intentó otro método analizando únicamente la región donde se ve la curva, es decir, el horizonte de la pista. Se intentó trazar una línea usando la transformada de Hough y si esa línea era muy larga es que estábamos en una recta y si era corta sería una curva, sin embargo, al ponerlo en práctica no hubo éxito.
 
+En cuanto a la calibración de los PIDs, se pensó que existiría alguna manera de ajustarlos automáticamente, forzando la simulación automáticamente y variandolos poco a poco siguiendo algún algoritmo y reiniciando la simulación, teniendo el error del centroide y el tiempo obtenido como objetivo a conseguir. Se intentó montar un prototipo pero no se encontró la manera de reiniciar la simulación por código.
+
+También se lograron buenos resultados usando dos PIDs e incluso uno. Si se pone un PID para la rotación del coche y escogemos la velocidad según la rotación se obtienen resultados muy buenos, y estos resultados se pueden mejorar mucho porque únicamente se necesitan calibrar 2 parámetros.
 
 ### Mejoras posibles
 
+La principal mejora que se puede obtener es un ajuste mucho más fino de los 8 parámetros de los PIDs, aunque actualmente sigue la línea en ciertas ocasiones hay un pequeño balanceo que podría mitigarse. Y el coche no va todo lo rápido que podría ir, sin embargo, el ajuste de parámetros es tedioso y la velocidad afecta a la rotación por lo que, en ocasiones, tocar un solo parámetro llega a afectar los otros tres relacionados.
+
+Se podría aprovechar mejor la máquina de estados que tenemos con nuestra información cuantitativa de las curvas, puesto que se puede decir cómo de cerrada es una curva, se podría clasificar las curvas en varios tipos (o tener esta información a la hora de realizar la curva). 
+
+
+### Problemas encontrados
+
+El principal problema que se ha encontrado al realizar la práctica es el ajuste de los PIDs, puesto que al tener 4 es altamente complejo. A pesar de que nuestros PIDs no son los mejores, se han invertido dos días únicamente en ello.
+
+También ha sido importante entender que prácticamente todos los elementos de nuestro robot están interconectados, por lo que el malfuncionamiento de un elemento provoco el malfuncionamiento de otro. En este caso concreto, al principio los umbrales para la detección de curvas no estaban bien puestos y eso daba la sensación de que nuestros PIDs no funcionaban correctamente. Una vez arreglado el problema de detección, los PIDs funcionaron como estaba previsto.
+
+### Conclusión
+
+Este proyecto ha sido interesante e incluso un poco adictivo, el hecho de querer superar tus marcas de tiempo y ver tu sistema lo más robusto posible es emocionante. Sin embargo, es un proyecto que puede causar frustración porque al más mínimo ajuste en la velocidad hay que retocar todos los valores de rotación, lo que no permitía evolucionar el vehículo fluidamente.
+
+Desde el punto de vista personal, me ha gustado el proyecto y me interesaría ver cosas como qué hacer si hay un obstáculo en la carretera, como hay que girar, frenar, bordear el objeto... Me he dado cuenta de que problemas como ese, que a priori nos pueden parecer sencillos realmente no lo son y tienen su complejidad para un funcionamiento fiable, robusto y resiliente.
 
 
 
 
 
 
-
-
-
-
-
-
-
-### 18/02
-
-Primeras pruebas filtrando la imagen y obteniendo el color rojo, de donde sacamos el contorno de la franja y obtenemos su centroide. Lo usaremos para controlar cuanto hay que rotar el coche. La primera aproximación que se da es ajustar con setW una cantidad fija si el centroide se desplaza más de nuestro umbral, esto para rectas funciona pero para curvas cerradas no, por lo que vamos a transformar la velocidad de la rotación en funcion del desplazamiento del centroide.
-
-Imagen del centroide
-![image](https://github.com/m4r4d0n4/m4r4d0n4.github.io/assets/58432330/6176f941-5035-42a4-9ad6-c0a94a912d0a)
-
-Tras ajustar la velocidad de rotación con el desplazamiento del centroide logramos que el coche ya sea capaz de realizar una vuelta limpia, pero actualmente está la velocidad fija, se producen balanceos y el coche no es rápido (110s por vuelta en circuito simple).
-
-### 19/02 
-
-Actualmente el ajuste de la rotación se hace según un umbral dependiendo de la posición en el eje x del centroide. Sin embargo, vamos a probar a controlar su desplazamiento, este desplazamiento es la diferencia entre la ultima coordenada x y la nueva coordenada x, estos valores se obtienen por cada frame renderizado, el tiempo entre frames no podemos saberlo de momento, por lo que calcularemos un deltatime para poder tenerlo y calcular una rotación más precisa.
-
-Ha surgido un nuevo problema y es que, además del balanceo, al aumentar la velocidad llegamos a unos puntos límites donde la curva se aleja lo suficiente como para que el centroide "parpadee". No obtenemos un centroide preciso por lo que vamos a intentar obtener un centroide más preciso sobre el que construir. Según he leído, hay varias aproximaciones, usar la media de las posiciones (algo que descarto porque en cambios bruscos de curva no creo que sea óptimo), interpolación, que puede ser una primera aproximación sobre la que evaluar su funcionamiento aunque dudo que sea la mejor opción y un filtro de Kalman que nos permite predicir la posición actual del centroide basado en datos anteriores. El filtro de Kalman, que desconozco actualmente su funcionamiento y su implementación, creo que puede ser la mejor opción.
-
-### 22/02
-
-Se va a hacer un PID para rectas y otro para curvas (tanto para rotacion como velocidad), donde el error sera la distancia al centroide en el eje x. Tambien voy a intentar analizar la curva, es decir, con el trazado que percibimos proyectar dicho trazado como si lo viesemos en planta (homografía), de manera que puedo analizar la curva en 2D sobre la carretera. Mi objetivo es poder obtener la curvatura y asi poder decidir si es mas cerrada o mas abierta y poder predecir lo antes posible el cambio de PID, ademas de evaluar la posibilidad de usar el parametro de la curvatura para dar un mejor ajuste en la velocidad. 
-
-En resumen, se va a implemenar un controlador PID generico y a partir de este, como tenemos 2 grados de libertad: rotacion y velocidad, generamos 4 PIDs para rectas y curvas.
-
-Por otra parte, se va a generar una automata de estados, de manera que podamos capturar los casos mas limites, como la no visualizacion de la recta, y podamos acotar el numero de situaciones inesperadas que podamos recibir. La idea del 19/02 del delta_centroide la dejamos de tener en cuenta y con ello el filtro de kallman, solo precisamos de la distancia que separa el punto ideal del centroide y el punto actual.
-
-Por último, se va a realizar un calibrado del punto de referencia del centroide, actualmente el centroide objetivo se encuentra en la mitad de la pantalla, pero lo ideal es que esté levemente desplazado. Encontraremos experimentalmente este punto.
-
-También he pensado en alguna manera de detectar la cercanía con las paredes como posible parámetro para ajustar el error del PID de las velocidades. Probablemente analizando la intensidad del color de las paredes sea una buena aproximación. También me he fijado que al acercarnos una curva se renderiza las paredes del fondo, de manera que si vemos una pared oscura delante en una región determinada de la pantalla podemos asegurar que nos acercamos a una curva.
-
-
-## 24/02 
-
-Ya tenemos los 4 controladores y los valores para los controladores PID de rectas ajustados, ahora tenemos que ajustar los PIDs para curvas. Para ello, primero necesitamos encontrar una manera fiable de detectar si estamos en una curva o una recta. Tambien hemos calibrado el cntroide del eje x que es 370. Para detectar la curva vamos a usar la convex hull delc ontorno de la curva y segun los defectos que tenga, mientras mas defectos mayor es la curva, experimental se esperan tener mas de 12 defectos si la curva no es recta. Estan los 4 PIDs calibrados, aun requieren de optimizar pero ya completa todos los circuitos aunque los tiempos son muy mejorables, sin embargo, esta siendo dificil aumentar la velocidad sin afectar al balanceo, al aumentar el u_b del controlador P en los PID de velocidad tenemos un balanceo muy grande que reuqiere de un reajuste de las K en las rotaciones. Por otra parte, en ocasiones el centroide x se mantenia pero el centroide y subia en la pantalla de manera que el error que nos daba no era del todo correcto, esto se producia en curvas abiertas y largas, por ello ahora en nuestro error tenemos en cuenta dicha coordenada, nuestro error sera la norma del vector que separa el centroide y nuestro centroide objetivo, el signo vendrá determinado por el signo del centroide x.
-
-## 25/02
-
-Contamos con un prototipo funcional que ya recorre el circuito, pero tenemos información que no estamos teniendo en cuenta como las distnacias a las paredes. A intentar ajustar la información dada por el centroide, evaluando solo considerar un fragmento de la pantalla. Para evitar las rotaciones bruscas vamos a limitar el PDI que puede dar, para rotacion será (2,-2) y para velocidad 30. El método actual a veces no detecta las curvas que son muy abiertas, por lo que se acompañara de otro metodo que mire como de ancho es el trazado como manera auxiliar para asegurarnos de que estamos en uan curva o una recta
 
