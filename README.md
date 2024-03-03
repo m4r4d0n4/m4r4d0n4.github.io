@@ -32,9 +32,9 @@ Los controladores PID sirven para el diseño de los sistemas de control automát
 - D (Derivativo) : El término derivativo predice la tendencia futura del error, basándose en su tasa de cambio actual. Está controlado por la constante `K_d`
 - I (Integral) : El término integral tiene como objetivo eliminar el error acumulado en el tiempo. Está controlado por la constante `K_i`
 
-$$
+```math
 - k_p \cdot e - K_D \cdot \frac{de}{dt} - k_i \cdot \int e \, dt
-$$
+```
 
 En este problema no tiene sentido utilizar el controlador integral, puesto que el error acumulado es la suma de las diferencias entre centroides a lo largo del circuito y no es deseable alterar, por ejemplo, el trazado de una curva en un instante por errores ocurridos 3 curvas atrás. (Hablar de q se intento usarlo reseteandolo cada 5s etc.)
 
