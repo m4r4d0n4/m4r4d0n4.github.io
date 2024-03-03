@@ -22,7 +22,13 @@ Para obtener una referencia que nos sirva para medir el error se toma la línea 
 
 La primera aproximación al error es `error = centroide_objetivo_x-centroide_observado_x`, sin embargo, como el centroide objetivo no está exactamente en medio de la pantalla y para obtener un error en [-1,1] llevamos a cabo una normalización, por tanto, `error = (centroide_objetivo_x-centroide_observado_x)/centroide_objetivo_x`
 
-Meter foto centroide
+Centroide observado en la imagen original
+![image](https://github.com/m4r4d0n4/m4r4d0n4.github.io/assets/58432330/27112050-a154-4acb-8530-e0beef1091c6)
+
+Centroide observado en la imagen umbralizada y recortada
+![image](https://github.com/m4r4d0n4/m4r4d0n4.github.io/assets/58432330/aae038bc-ef0c-4d09-aab3-32599fee8bd7)
+
+
 
 ### Controladores PID
 
@@ -53,7 +59,16 @@ Se han descrito los PIDs y cómo según la posición en el trazado actúan unos 
 
 Otra manera con la que aseguramos que estamos ante una curva, ha sido tomar la máscara de la curva y hacer cortes horizontales para quedarnos segmentos de la curva. En estas etapas, se encuentra su punto promedio, de manera que obtenemos al final una línea segmentada que tiene la estructura de la curva. Para saber si estos puntos forman una recta o no, usamos la ecuación de la recta y = mx + b, calcularemos la pendiente y la b con dos puntos y veremos si el resto de puntos está cerca o no de la recta calculada. Se establece una tolerancia hallada experimentalmente que nos indicará si el vehículo está en una curva o un recta.
 
-Fotos de las movidas
+En la parte superior de la imagen se aprecian los puntos que calculamos, los proyectamos en el cielo para no ensuciar la imagen de la cámara y visualizar claramente la curva. 
+![image](https://github.com/m4r4d0n4/m4r4d0n4.github.io/assets/58432330/f4420cc7-d320-4fb6-93ac-9d3ef0e6a07a)
+
+En el caso de una recta
+![image](https://github.com/m4r4d0n4/m4r4d0n4.github.io/assets/58432330/fe879a27-f6df-494a-ba0a-cf2188c148f8)
+
+En cuanto al convex hull tenemos esta visualización donde se aprecian los defectos(por defecto la tenemos quitada porque ensucia mucho la imagen)
+
+![image](https://github.com/m4r4d0n4/m4r4d0n4.github.io/assets/58432330/4b1dfc60-6e7c-4502-aa6e-3f88b718ffa0)
+
 
 Con la detección de curvas hecha, la máquina de estados resultante es muy simple, si se está en una curva se usan los PIDs de curvas, si se está en recta se usarán los PIDs de recta y si se está en un estado desconocido se rotará el coche hasta encontrar la línea roja.
 
