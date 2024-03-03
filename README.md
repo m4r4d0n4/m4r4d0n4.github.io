@@ -4,6 +4,77 @@ Página web de Juan Montes Cano para la asignatura de Visión Robótica del MUVA
 
 ## Práctica 1 Fórmula 1
 
+### Introducción
+
+El problema a resolver es el control de un Fórmula 1 que contiene una cámara y podrá observar el asfalto. En medio del asfalto hay una línea roja, que nos servirá como apoyo para el desarrollo de un algoritmo reactivo de control visual.
+
+### Planteamiento
+
+Para solucionar el problema nos apoyaremos en controladores PID. Se distinguen dos grados de libertad: el ángulo de giro y la velocidad del vehículo. Y dentro del trazado se distinguen dos zonas claramente diferenciadas, las curvas y las rectas. Por tanto, se diseñaran y ajustarán 4 controladores PIDs, 2 para las velocidades en rectas y curvas y dos para el giro del vehículo en rectas y curvas.
+
+Por otra parte, puesto que se usan controladores PID se tiene que establecer el error a usar, por lo que se tendrá en cuenta la línea roja para obtener una referencia de la pista.
+
+Por último, se diseñará una máquina de estados que nos indicará si estamos en una curva, recta o un estado desconocido.
+
+### Medida de error
+
+Para obtener una referencia que nos sirva para medir el error se toma la línea roja. A partir de aquí, se aplica un procesado de la imagen que incluye un filtro de color HSV, la obtención de la máscara que da los puntos de la línea roja y el cálculo de su contorno con el que calcularemos el centroide. Lo primero que se realiza es obtener un centroide como referencia si el coche estuviese encima de la línea, para ello, se situa el coche en la línea y se toma el centroide de referencia. A partir de aquí, se puede tomar como medida de error la diferencia entre el centroide observado y el centroide objetivo. En este caso, se toma la diferencia respecto de la coordenada x, y no se analizará la parte inferior de la línea roja que será previamente recortada, debido a que la información del centroide de la parte superior de la máscara varía menos y nos proporciona un error más estable.
+
+La primera aproximación al error es ´error = centroide_objetivo_x-centroide_observado_x´, sin embargo, como el centroide objetivo no está exactamente en medio de la pantalla y para obtener un error en [0,1] llevamos a cabo una normalización, por tanto, ´error = (centroide_objetivo_x-centroide_observado_x)/centroide_objetivo_x´
+
+Meter foto centroide
+
+### Controladores PID
+
+Los controladores PID sirven para el diseño de los sistemas de control automático. Cada componente de un controlador PID cumple una función específica:
+
+- P (Proporcional) : Ofrece una salida proporcional al error del sistema y está controlado por la constante `K_p`
+- D (Derivativo) : El término derivativo predice la tendencia futura del error, basándose en su tasa de cambio actual. Está controlado por la constante `K_d`
+- I (Integral) : El término integral tiene como objetivo eliminar el error acumulado en el tiempo. Está controlado por la constante `K_i`
+
+En este problema no tiene sentido utilizar el controlador integral, puesto que el error acumulado es la suma de las diferencias entre centroides a lo largo del circuito y no es deseable alterar, por ejemplo, el trazado de una curva en un instante por errores ocurridos 3 curvas atrás. (Hablar de q se intento usarlo reseteandolo cada 5s etc.)
+
+Nuestro sistema consta de 4 PIDs:
+- Curvas : Un PID para velocidad y un PID para girar el vehículo
+- Rectas : Un PID para velocidad y un PID para girar el vehículo
+
+La tarea de ajuste de parámetros de los PIDs se ha llevado a cabo manualmente, lo que implica el ajuste de 8 parámetros. (Hablar de q esta manera no es optima y tal tal tal en alguan seccion de mejroas y eso) (nuestros valores de PIDs)
+
+
+### Máquina de estados
+
+Se han descrito los PIDs y cómo según la posición en el trazado actúan unos u otros, pero hasta el momento no se tiene manera de distinguir si el vehículo se encuentra en una curva o en una recta. Este proyecto ha mezclado dos formas de obtener si estamos ante una recta o una curva. La primera es el uso de la función `cv2.convexityDefects` para obtener los defectos (es decir, partes donde no hay convexidad) de la convex hull de la línea roja. La línea roja cuando es recta es convexa pero al aparecer una curva surgen defectos. Experimentalmente se han encontrado los números de defectos necesarios para categorizar una curva.
+
+Otra manera con la que aseguramos que estamos ante una curva, ha sido tomar la máscara de la curva y hacer cortes horizontales para quedarnos segmentos de la curva. En estas etapas, se encuentra su punto promedio, de manera que obtenemos al final una línea segmentada que tiene la estructura de la curva. Para saber si estos puntos forman una recta o no, usamos la ecuación de la recta y = mx + b, calcularemos la pendiente y la b con dos puntos y veremos si el resto de puntos está cerca o no de la recta calculada. Se establece una tolerancia hallada experimentalmente que nos indicará si el vehículo está en una curva o un recta.
+
+Fotos de las movidas
+
+Con la detección de curvas hecha, la máquina de estados resultante es muy simple, si se está en una curva se usan los PIDs de curvas, si se está en recta se usarán los PIDs de recta y si se está en un estado desconocido se rotará el coche hasta encontrar la línea roja.
+
+
+### Resultados
+
+Video 
+
+### Alternativas intentadas
+
+
+
+### Mejoras posibles
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### 18/02
 
 Primeras pruebas filtrando la imagen y obteniendo el color rojo, de donde sacamos el contorno de la franja y obtenemos su centroide. Lo usaremos para controlar cuanto hay que rotar el coche. La primera aproximación que se da es ajustar con setW una cantidad fija si el centroide se desplaza más de nuestro umbral, esto para rectas funciona pero para curvas cerradas no, por lo que vamos a transformar la velocidad de la rotación en funcion del desplazamiento del centroide.
